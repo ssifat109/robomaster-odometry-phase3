@@ -1,0 +1,12 @@
+{
+  "frames": 111,
+  "detections": 111,
+  "detection_fraction": 1.0,
+  "max_between_detections_s": 0.12039520299998685,
+  "median_camera_forward_m": 0.6085616303425083,
+  "median_calibrated_forward_range_m": null,
+  "known_bumper_to_tag_m": 0.4,
+  "calibration_verified": false,
+  "candidate_bumper_to_tag_m": 0.36209844436305016,
+  "candidate_error_m": -0.03790155563694986
+}

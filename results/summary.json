@@ -1,0 +1,57 @@
+{
+  "trials": 8,
+  "mean_absolute_error_m": 0.019735152895427516,
+  "error_min_m": -0.031048310232172138,
+  "error_max_m": 0.021575870057211732,
+  "error_range_width_m": 0.05262418028938387,
+  "rows": [
+    {
+      "trial": 1,
+      "estimated_m": 0.6315758700572117,
+      "measured_m": 0.61,
+      "error_m": 0.021575870057211732
+    },
+    {
+      "trial": 2,
+      "estimated_m": 0.616210377526326,
+      "measured_m": 0.63,
+      "error_m": -0.01378962247367399
+    },
+    {
+      "trial": 3,
+      "estimated_m": 0.6189516897678279,
+      "measured_m": 0.65,
+      "error_m": -0.031048310232172138
+    },
+    {
+      "trial": 4,
+      "estimated_m": 0.6314242693552168,
+      "measured_m": 0.65,
+      "error_m": -0.01857573064478324
+    },
+    {
+      "trial": 5,
+      "estimated_m": 0.6158125564789132,
+      "measured_m": 0.64,
+      "error_m": -0.024187443521086816
+    },
+    {
+      "trial": 6,
+      "estimated_m": 0.6288131026593674,
+      "measured_m": 0.645,
+      "error_m": -0.01618689734063261
+    },
+    {
+      "trial": 8,
+      "estimated_m": 0.6276340237195004,
+      "measured_m": 0.645,
+      "error_m": -0.01736597628049963
+    },
+    {
+      "trial": 9,
+      "estimated_m": 0.62484862738664,
+      "measured_m": 0.64,
+      "error_m": -0.01515137261335997
+    }
+  ]
+}

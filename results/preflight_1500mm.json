@@ -1,0 +1,10 @@
+{
+  "frames": 113,
+  "detections": 113,
+  "detection_fraction": 1.0,
+  "max_between_detections_s": 0.12284810099998822,
+  "median_camera_forward_m": 1.7769855130475525,
+  "median_calibrated_forward_range_m": null,
+  "known_bumper_to_tag_m": 1.5,
+  "calibration_verified": false
+}

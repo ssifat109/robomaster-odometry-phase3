@@ -1,0 +1,9 @@
+{
+  "range_scale": 0.973877350917005,
+  "range_offset_m": -0.23056594406464548,
+  "near_known_m": 0.57,
+  "near_camera_m": 0.8220398013269646,
+  "far_known_m": 1.5,
+  "far_camera_m": 1.7769855130475525,
+  "warning": "Validate at an independent third distance before setting calibration_verified true"
+}

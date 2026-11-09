@@ -1,0 +1,7 @@
+{
+  "trial": 4,
+  "stop_reason": "TARGET_STOP",
+  "estimated_final_distance_m": 0.6314242693552168,
+  "measured_final_distance_m": null,
+  "reference_point": "front bumper centre to tag plane"
+}

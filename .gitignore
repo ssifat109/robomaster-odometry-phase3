@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+tmp/
+results/*.jpg
+results/preflight.json
+results/video_codec_check.mp4
+results/trial_*_camera.mp4
+tags/*preview*.png
+tags/140_preview.png
+tags/apriltag3_80mm.pdf
+tags/apriltag3_180mm_A4.pdf
+RoboMaster_Odometry_Project_Phase_3 (1).pdf

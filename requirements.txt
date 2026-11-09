@@ -1,0 +1,5 @@
+robomaster
+opencv-contrib-python
+numpy
+PyYAML
+reportlab

@@ -1,0 +1,8 @@
+{
+  "motion_command_m_s": 0.06,
+  "command_duration_s": 0.6,
+  "initial_estimated_range_m": 1.509842988525455,
+  "odometry_delta_x_m": 0.03397,
+  "odometry_direction_ok": true,
+  "final_estimated_range_m": 1.5089688026946702
+}
