@@ -66,6 +66,7 @@ stop; the measured final distance is entered separately after the run.
 
 ## Submission
 
-The PDF report, code, and trial results are ready. The student will send the
-demonstration videos directly to the TA. Publish the code to a GitHub repository
-and provide its URL. Do not describe the old simulations as Phase 3 data.
+The PDF report, code, and trial results are published at
+https://github.com/ssifat109/robomaster-odometry-phase3. The student will send
+the demonstration videos directly to the TA. Do not describe the old
+simulations as Phase 3 data.

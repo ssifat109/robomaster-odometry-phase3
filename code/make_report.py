@@ -173,6 +173,9 @@ def footer(canvas, doc):
     canvas.setFillColor(colors.HexColor("#526875"))
     canvas.drawString(1.8*cm, 0.95*cm, "SCE-672 | RoboMaster Odometry | Phase 3")
     canvas.drawRightString(A4[0]-1.8*cm, 0.95*cm, str(doc.page))
+    canvas.setFont("Helvetica", 7)
+    canvas.drawString(1.8*cm, 0.65*cm,
+                      "github.com/ssifat109/robomaster-odometry-phase3")
     canvas.restoreState()
 
 doc.build(story, onFirstPage=footer, onLaterPages=footer)

@@ -125,4 +125,4 @@ run only after reconnection. No ToF measurement is claimed in these results.
 - Computed result table: `results/summary.csv` and `results/summary.json`.
 - Robot-camera video: `results/trial_08_camera.mp4`.
 - Phone demonstration video: captured by the student and sent directly to the TA.
-- GitHub repository link: pending connection/publication.
+- GitHub repository: https://github.com/ssifat109/robomaster-odometry-phase3
