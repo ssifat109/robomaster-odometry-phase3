@@ -118,6 +118,26 @@ loss-of-tag stop. A separate Trial 2 connection attempt failed before any
 motion when Windows left the RoboMaster Wi-Fi; the successful Trial 2 was
 run only after reconnection. No ToF measurement is claimed in these results.
 
+## Graphs included in the PDF
+
+The report includes six figures generated from the logged measurements:
+
+1. Trial 8 corrected and camera-derived bumper-to-tag distance versus time,
+   with the 0.63 m guarded stopping threshold.
+2. Trial 8 logged chassis x position and the speed reference reconstructed
+   from the logged corrected distance and the implemented control law. The
+   issued speed commands and actual wheel speed were not logged.
+3. Trial 8 camera-minus-prediction innovation, with the +/-0.15 m acceptance
+   limits.
+4. Camera-axis depth versus tape-measured bumper range: two calibration
+   placements and two independent checks.
+5. Estimated and independently measured final distances for all eight
+   successful target-stop trials.
+6. Signed final distance error by trial, with the 2.0 cm mean absolute error.
+
+The figure images are in `figures/`; `code/make_report_graphs.py` regenerates
+them from the CSV and preflight results. Trial 1's tape reading is approximate.
+
 ## Submission artifacts
 
 - Code and configuration: `code/`, `config/phase3.yaml`, and launcher `.bat` files.

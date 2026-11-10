@@ -10,3 +10,7 @@ tags/140_preview.png
 tags/apriltag3_80mm.pdf
 tags/apriltag3_180mm_A4.pdf
 RoboMaster_Odometry_Project_Phase_3 (1).pdf
+.chart-data-*/
+.presentation-build/
+presentation/
+phase3_submission.zip

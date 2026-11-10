@@ -9,7 +9,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table,
-                               TableStyle, Image, PageBreak)
+                               TableStyle, Image, PageBreak, KeepTogether)
 
 root = Path(__file__).resolve().parents[1]
 summary = json.loads((root / "results" / "summary.json").read_text(encoding="utf-8"))
@@ -164,6 +164,57 @@ if video.exists():
                          colWidths=[7.8*cm, 7.8*cm])
         evidence.setStyle(TableStyle([("ALIGN", (0,0), (-1,-1), "CENTER")]))
         story.append(evidence)
+
+def report_figure(filename, caption):
+    path = root / "figures" / filename
+    if not path.exists():
+        raise FileNotFoundError(f"Run code/make_report_graphs.py first: {path}")
+    story.append(KeepTogether([
+        Image(str(path), width=16.5*cm, height=7.9*cm),
+        Spacer(1, 0.08*cm),
+        Paragraph(caption, styles["Small"]),
+        Spacer(1, 0.30*cm),
+    ]))
+
+story.append(PageBreak())
+section("Motion and distance tracking")
+p("The following graphs use Trial 8 raw telemetry. This representative run stopped "
+  "at 0.628 m estimated versus 0.645 m measured. The target threshold is 0.63 m "
+  "because it includes the 0.08 m guard added to the 0.55 m nominal stop.")
+report_figure("01_distance_tracking.png",
+  "Figure 1. Corrected range and camera-derived range versus elapsed time, with "
+  "the guarded stop threshold. Source: results/trial_08.csv.")
+report_figure("02_odometry_speed.png",
+  "Figure 2. Logged chassis x position and speed reference reconstructed from "
+  "the logged corrected range using the implemented control law. Individual "
+  "drive_speed commands and actual wheel speed were not logged.")
+
+story.append(PageBreak())
+section("Correction and calibration")
+p("The camera measurement is used only when its innovation relative to the "
+  "odometry prediction is within 0.15 m. The stationary calibration chart "
+  "separates the two fit points from two independent tape checks.")
+report_figure("03_innovation.png",
+  "Figure 3. Camera minus predicted bumper range for accepted Trial 8 "
+  "corrections. Dashed lines show the +/-15 cm acceptance limit. "
+  "Source: results/trial_08.csv.")
+report_figure("04_calibration.png",
+  "Figure 4. Camera-axis depth versus tape-measured bumper range. The 0.57 m "
+  "and 1.50 m points define the line; 0.40 m and 1.45 m are held-out checks. "
+  "Sources: results/preflight_*.json and config/phase3.yaml.")
+
+story.append(PageBreak())
+section("Across-trial comparison")
+p("Only eight target-stop runs are included. Trial 7 was an early safety stop "
+  "and is discussed on page 2. Trial 1's tape value was reported as almost "
+  "61 cm, so its plotted measurement and error are approximate.")
+report_figure("05_final_distances.png",
+  "Figure 5. Estimated and independently measured final bumper-to-tag distance "
+  "for every successful target-stop trial. Source: results/summary.csv.")
+report_figure("06_final_errors.png",
+  "Figure 6. Signed error is estimate minus tape measurement. Mean absolute "
+  "error (MAE) is 2.0 cm; the signed range is -3.1 to +2.2 cm. "
+  "Source: results/summary.csv.")
 
 def footer(canvas, doc):
     canvas.saveState()
