@@ -5,12 +5,12 @@
 **Instructor:** Professor Aamer Iqbal Bhatti
 
 **Student:** Md. Shakib Al Sifat (202613880)
-**Experiment date:** 10 November 2026
+**Experiment dates:** 10 and 14 November 2026
 
 ## Objective
 
 The RoboMaster EP Core detected a fixed tag and drove straight toward it from
-the same measured 1.50 m starting distance on eight successful trials. The
+the same measured 1.50 m starting distance on nine successful trials. The
 robot stopped before the tag. Its remaining-distance estimate combined
 chassis-position odometry prediction with camera-based tag correction. The
 estimated distance after stopping was compared with an independently measured
@@ -30,7 +30,7 @@ The nominal stop distance was 0.55 m. The controller applied an 0.08 m early
 stop margin, so it commanded zero speed when its estimate reached about
 0.63 m. The maximum forward command was 0.10 m/s; lateral and yaw commands
 were zero. An operator stayed beside the robot. A separate phone recording
-captured the full first approach, and `results/trial_08_camera.mp4` shows the
+captured the full first approach, and `results/trial_10_camera.mp4` shows the
 onboard camera view with tag and estimate overlays.
 
 ## Detection, prediction, and correction
@@ -72,6 +72,9 @@ returned by hand to the 1.50 m bumper-to-tag mark before the next run.
 The final distance was independently measured with a tape after the robot had
 stopped, before it was moved. The first tape reading was reported as
 "almost 61 cm"; calculations use 0.61 m, so the first error is approximate.
+Before Trial 10 on 14 November, a stationary preflight detected the tag in
+138/138 frames and estimated 1.477 m at the 1.50 m mark. The user measured
+the stopped Trial 10 at 0.65 m from the front bumper centre to the tag face.
 
 ## Results
 
@@ -89,18 +92,19 @@ measurements. Trial number 7 was an aborted attempt and is described below.
 | 6 | 62.9 | 64.5 | -1.6 |
 | 8 | 62.8 | 64.5 | -1.7 |
 | 9 | 62.5 | 64.0 | -1.5 |
+| 10 | 62.2 | 65.0 | -2.8 |
 
-Across the eight successful trials, mean absolute error was **0.0197 m
-(approximately 2.0 cm)**. The signed error range was **-0.0310 to +0.0216 m
+Across the nine successful trials, mean absolute error was **0.0207 m
+(approximately 2.1 cm)**. The signed error range was **-0.0310 to +0.0216 m
 (-3.1 to +2.2 cm)**, a width of **0.0526 m (5.3 cm)**. These statistics use
 the unrounded estimates in `results/summary.json`. Trial 1's approximate tape
 reading limits the precision of the aggregate figures.
 
 ## Discussion
 
-All eight successful runs reached the target stop before the tag. Measured
-final distances were between 61.0 and 65.0 cm, a 4.0 cm spread. Seven of the
-eight signed errors were negative, which suggests a small tendency for the
+All nine successful runs reached the target stop before the tag. Measured
+final distances were between 61.0 and 65.0 cm, a 4.0 cm spread. Eight of the
+nine signed errors were negative, which suggests a small tendency for the
 camera/odometry estimate to understate the actual stopping distance in this
 setup. The measured error size is consistent with the independent camera
 range checks. Tape placement, printed-marker scale and stand flatness, camera
@@ -113,7 +117,7 @@ Prediction maintained an estimate between camera frames. Correction pulled
 the estimate toward the tag-based range when a plausible fresh pose arrived.
 Attempt 7 stopped early at an estimated 0.832 m after a camera-frame pause
 exceeded the 0.50 s tag-age limit; the user measured about 0.85 m after that
-stop. It was excluded from the eight target-stop results and demonstrates the
+stop. It was excluded from the nine target-stop results and demonstrates the
 loss-of-tag stop. A separate Trial 2 connection attempt failed before any
 motion when Windows left the RoboMaster Wi-Fi; the successful Trial 2 was
 run only after reconnection. No ToF measurement is claimed in these results.
@@ -122,18 +126,17 @@ run only after reconnection. No ToF measurement is claimed in these results.
 
 The report includes six figures generated from the logged measurements:
 
-1. Trial 8 corrected and camera-derived bumper-to-tag distance versus time,
+1. Trial 10 corrected and camera-derived bumper-to-tag distance versus time,
    with the 0.63 m guarded stopping threshold.
-2. Trial 8 logged chassis x position and the speed reference reconstructed
-   from the logged corrected distance and the implemented control law. The
-   issued speed commands and actual wheel speed were not logged.
-3. Trial 8 camera-minus-prediction innovation, with the +/-0.15 m acceptance
+2. Trial 10 logged chassis x position and commanded forward speed. The
+   controller logged each commanded speed; actual wheel speed was not measured.
+3. Trial 10 camera-minus-prediction innovation, with the +/-0.15 m acceptance
    limits.
 4. Camera-axis depth versus tape-measured bumper range: two calibration
    placements and two independent checks.
-5. Estimated and independently measured final distances for all eight
+5. Estimated and independently measured final distances for all nine
    successful target-stop trials.
-6. Signed final distance error by trial, with the 2.0 cm mean absolute error.
+6. Signed final distance error by trial, with the 2.1 cm mean absolute error.
 
 The figure images are in `figures/`; `code/make_report_graphs.py` regenerates
 them from the CSV and preflight results. Trial 1's tape reading is approximate.
@@ -143,6 +146,8 @@ them from the CSV and preflight results. Trial 1's tape reading is approximate.
 - Code and configuration: `code/`, `config/phase3.yaml`, and launcher `.bat` files.
 - Raw per-trial telemetry: `results/trial_*.csv` and `results/trial_*.json`.
 - Computed result table: `results/summary.csv` and `results/summary.json`.
-- Robot-camera video: `results/trial_08_camera.mp4`.
+- Robot-camera video: `results/trial_10_camera.mp4`; the synchronized
+  camera-and-command video is `presentation/trial_10_camera_and_screen_recording.mp4`
+  and is supplied separately from the GitHub repository.
 - Phone demonstration video: captured by the student and sent directly to the TA.
 - GitHub repository: https://github.com/ssifat109/robomaster-odometry-phase3

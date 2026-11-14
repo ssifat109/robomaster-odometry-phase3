@@ -141,6 +141,7 @@ def run_trial(ep, detector, cfg, out, trial):
                     0.8, (255, 255, 255), 2, cv2.LINE_AA)
         video_writer.write(annotated)
     start = time.monotonic()
+    last_console = start
     last_odo = None
     estimate = None
     last_tag_time = -1e9
@@ -185,14 +186,23 @@ def run_trial(ep, detector, cfg, out, trial):
                 estimate = predicted
             if now - last_tag_time > cfg["max_tag_age_s"]:
                 reason = "TAG_STALE"; break
-            rows.append([now-start, odo["x"], delta, predicted, observed,
-                         estimate, now-last_tag_time, "MOVING"])
-            record_frame(frame, tag, estimate, "MOVING")
             # Guard includes a margin for one camera/control cycle of travel.
             if estimate <= cfg["stop_distance_m"] + cfg["stop_margin_m"]:
-                reason = "TARGET_STOP"; break
-            speed = min(cfg["max_speed_m_s"], max(0.03, 0.5 *
-                        (estimate-cfg["stop_distance_m"]-cfg["stop_margin_m"])))
+                speed = 0.0
+                reason = "TARGET_STOP"
+            else:
+                speed = min(cfg["max_speed_m_s"], max(0.03, 0.5 *
+                            (estimate-cfg["stop_distance_m"]-cfg["stop_margin_m"])))
+            rows.append([now-start, odo["x"], delta, predicted, observed,
+                         estimate, now-last_tag_time, "MOVING", speed])
+            record_frame(frame, tag, estimate, "MOVING")
+            if now - last_console >= 0.25 or speed == 0:
+                print(f"t={now-start:5.2f}s x={odo['x']:.3f}m "
+                      f"d_pred={predicted:.3f}m d_est={estimate:.3f}m "
+                      f"drive_speed(x={speed:.3f}, y=0, z=0)", flush=True)
+                last_console = now
+            if speed == 0:
+                break
             ep.chassis.drive_speed(x=speed, y=0, z=0, timeout=0.25)
     finally:
         ep.chassis.drive_speed(x=0, y=0, z=0, timeout=0.5)
@@ -216,7 +226,7 @@ def run_trial(ep, detector, cfg, out, trial):
                         estimate += cfg["correction_gain"] * (observed - predicted)
                         last_tag_time = now
                 rows.append([now-start, odo["x"], delta, predicted, observed,
-                             estimate, now-last_tag_time, "POST_STOP"])
+                             estimate, now-last_tag_time, "POST_STOP", 0.0])
                 record_frame(frame, tag, estimate, "STOPPED")
         ep.chassis.unsub_position()
         if video_writer is not None:
@@ -226,7 +236,8 @@ def run_trial(ep, detector, cfg, out, trial):
             with path.open("w", newline="", encoding="utf-8") as file:
                 writer = csv.writer(file)
                 writer.writerow(["elapsed_s", "odometry_x_m", "delta_x_m", "predicted_distance_m",
-                                 "tag_forward_distance_m", "corrected_distance_m", "tag_age_s", "phase"])
+                                 "tag_forward_distance_m", "corrected_distance_m", "tag_age_s", "phase",
+                                 "commanded_speed_m_s"])
                 writer.writerows(rows)
             (out / f"trial_{trial:02d}.json").write_text(json.dumps({
                 "trial": trial, "stop_reason": reason, "estimated_final_distance_m": estimate,

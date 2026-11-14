@@ -12,7 +12,7 @@ root = Path(__file__).resolve().parents[1]
 out = root / "figures"
 out.mkdir(parents=True, exist_ok=True)
 
-with (root / "results" / "trial_08.csv").open(newline="", encoding="utf-8") as f:
+with (root / "results" / "trial_10.csv").open(newline="", encoding="utf-8") as f:
     rows = list(csv.DictReader(f))
 with (root / "results" / "summary.csv").open(newline="", encoding="utf-8") as f:
     trials = list(csv.DictReader(f))
@@ -26,8 +26,7 @@ pred = np.array([number(r["predicted_distance_m"]) for r in rows])
 cam = np.array([number(r["tag_forward_distance_m"]) for r in rows])
 corr = np.array([number(r["corrected_distance_m"]) for r in rows])
 moving = np.array([r["phase"] == "MOVING" for r in rows])
-vref = np.minimum(.10, np.maximum(.03, .5 * (corr - .55 - .08)))
-vref[~moving] = 0
+vref = np.array([number(r["commanded_speed_m_s"]) for r in rows])
 
 plt.rcParams.update({"font.family":"DejaVu Sans", "font.size":9,
                      "axes.titlesize":10, "axes.labelsize":9,
@@ -46,24 +45,24 @@ ax.scatter(t[np.isfinite(cam)], cam[np.isfinite(cam)], s=5, color=orange,
            alpha=.45, label="Camera-derived range")
 ax.axhline(.63, color=navy, ls="--", lw=1.4, label="Guarded stop threshold (0.63 m)")
 ax.set(xlabel="Elapsed time (s)", ylabel="Bumper-to-tag distance (m)",
-       title="Trial 8 distance tracking")
+       title="Trial 10 distance tracking")
 ax.grid(axis="y", color="#DCE5E9", lw=.7)
 ax.legend(loc="upper right", frameon=False, ncol=1)
 finish(fig, "01_distance_tracking.png")
 
-# 2. Logged chassis x and reconstructed command reference from the source law.
+# 2. Logged chassis x and the controller's recorded speed commands.
 fig, axes = plt.subplots(1, 2, figsize=(9.2, 4.4))
 axes[0].plot(t, x, color=blue, lw=2.2)
 axes[0].set(xlabel="Elapsed time (s)", ylabel="Chassis x (m)",
             title="Logged forward odometry")
 axes[1].plot(t, vref, color=orange, lw=2.2)
 axes[1].set(xlabel="Elapsed time (s)", ylabel="Speed reference (m/s)",
-            title="Reconstructed control reference")
+            title="Logged forward speed command")
 for ax in axes: ax.grid(axis="y", color="#DCE5E9", lw=.7)
 fig.tight_layout(w_pad=2.5)
 finish(fig, "02_odometry_speed.png")
 
-# 3. Measurement innovation and correction magnitude during Trial 8.
+# 3. Measurement innovation and correction magnitude during Trial 10.
 innovation = 100 * (cam - pred)
 applied = np.isfinite(innovation) & (np.abs(innovation) <= 15)
 fig, ax = plt.subplots(figsize=(9.2, 4.4))
@@ -73,7 +72,7 @@ ax.axhline(0, color=navy, lw=1)
 ax.axhline(15, color=orange, ls="--", lw=1, label="Acceptance limit (+/-15 cm)")
 ax.axhline(-15, color=orange, ls="--", lw=1)
 ax.set(xlabel="Elapsed time (s)", ylabel="Innovation (cm)",
-       title="Trial 8 camera correction input")
+       title="Trial 10 camera correction input")
 ax.grid(axis="y", color="#DCE5E9", lw=.7)
 finish(fig, "03_innovation.png")
 

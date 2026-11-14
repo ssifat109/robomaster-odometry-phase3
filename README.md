@@ -7,11 +7,14 @@ The robot stays straight: forward chassis command only, zero lateral and yaw.
 
 ## Current status
 
-Eight successful physical trials were completed on 10 November 2026. The
-mean absolute final-distance error was about 2.0 cm; signed errors ranged
+Nine successful physical trials were completed on 10 and 14 November 2026. The
+mean absolute final-distance error was about 2.1 cm; signed errors ranged
 from -3.1 to +2.2 cm. Attempt 7 stopped early on stale camera frames and is
-excluded from the eight target-stop trials. The report and raw results are in
+excluded from the nine target-stop trials. The report and raw results are in
 `output/pdf/phase3_report.pdf`, `report.md`, and `results/`.
+Trial 10 has a tape-measured final distance of 0.65 m and a logged final
+estimate of 0.6216 m. Its camera and synchronized command videos are supplied
+separately to the TA; video files are not stored in this repository.
 
 This setup uses the 142 mm printed black square, camera surveys at 0.57 and
 1.50 m, and independent 0.40 and 1.45 m checks. The 0.40 m check had -0.038 m
@@ -50,7 +53,7 @@ sensors returned zero. `operator_present` is reset to false after the trials.
    detection and approach, showing the final tape measurement.
 7. Run `analyze.bat`. It computes signed error = estimated minus measured,
    mean absolute error, and minimum/maximum error. Run `build_report.bat` to
-   regenerate the PDF from the recorded results.
+   regenerate the six figures and PDF from the recorded results.
 
 ## Method
 

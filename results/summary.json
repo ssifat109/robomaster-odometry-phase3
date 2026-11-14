@@ -1,6 +1,6 @@
 {
-  "trials": 8,
-  "mean_absolute_error_m": 0.019735152895427516,
+  "trials": 9,
+  "mean_absolute_error_m": 0.02070024374401976,
   "error_min_m": -0.031048310232172138,
   "error_max_m": 0.021575870057211732,
   "error_range_width_m": 0.05262418028938387,
@@ -52,6 +52,12 @@
       "estimated_m": 0.62484862738664,
       "measured_m": 0.64,
       "error_m": -0.01515137261335997
+    },
+    {
+      "trial": 10,
+      "estimated_m": 0.6215790294672423,
+      "measured_m": 0.65,
+      "error_m": -0.028420970532757717
     }
   ]
 }

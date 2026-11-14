@@ -13,7 +13,7 @@ from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table,
 
 root = Path(__file__).resolve().parents[1]
 summary = json.loads((root / "results" / "summary.json").read_text(encoding="utf-8"))
-assert summary["trials"] == 8
+assert summary["trials"] == 9
 out_dir = root / "output" / "pdf"
 out_dir.mkdir(parents=True, exist_ok=True)
 out = out_dir / "phase3_report.pdf"
@@ -43,10 +43,10 @@ def section(name):
 
 p("RoboMaster Odometry - Phase 3", "ReportTitle")
 p("SCE-672 Advanced Robotics | Professor Aamer Iqbal Bhatti<br/>"
-  "Md. Shakib Al Sifat | 202613880 | 10 November 2026", "Deck")
+  "Md. Shakib Al Sifat | 202613880 | 10 and 14 November 2026", "Deck")
 section("Objective and setup")
 p("The RoboMaster EP Core detected a fixed tag and drove straight toward it from "
-  "the same <b>1.50 m</b> starting distance on eight successful trials. The robot "
+  "the same <b>1.50 m</b> starting distance on nine successful trials. The robot "
   "stopped before the tag. Each post-stop estimated distance was compared with "
   "an independently taped distance from the <b>front bumper centre to the tag's "
   "flat front plane</b>.")
@@ -84,9 +84,13 @@ p("Stationary detection succeeded in 86/86 frames at 0.57 m, 113/113 at 1.50 m, 
   "normally: tape displacement was about 0.05 m, while odometry reported +0.034 m. "
   "The operator reset the bumper to 1.50 m before each successful trial and taped "
   "the final distance before moving the robot again.")
+p("Before the additional Trial 10 on 14 November, a stationary preflight detected "
+  "the tag in 138/138 frames and estimated 1.477 m at the 1.50 m start mark. "
+  "Trial 10 then reached the target stop; the user measured 0.65 m from the "
+  "front bumper centre to the tag face.")
 
 story.append(PageBreak())
-section("Eight successful trial results")
+section("Nine successful trial results")
 p("Signed error = estimated final distance - measured final distance. Values "
   "below are rounded to 0.1 cm. The Trial 1 tape reading was reported as "
   "'almost 61 cm'; the calculation uses 61 cm and is approximate.")
@@ -119,8 +123,8 @@ p(f'<b>Mean absolute error:</b> {summary["mean_absolute_error_m"]*100:.1f} cm. '
   "limits their precision.")
 
 section("Discussion and exception")
-p("All eight counted runs reached the target stop before the tag. The taped "
-  "final distances ranged from 61.0 to 65.0 cm. Seven signed errors were "
+p("All nine counted runs reached the target stop before the tag. The taped "
+  "final distances ranged from 61.0 to 65.0 cm. Eight signed errors were "
   "negative, suggesting a small tendency to understate the actual stopping "
   "distance in this setup. Calibration/marker pose uncertainty, a slightly "
   "non-flat stand, tape placement, floor traction, odometry drift, frame timing, "
@@ -130,12 +134,12 @@ p("All eight counted runs reached the target stop before the tag. The taped "
   "maintained the estimate between frames.")
 p("Attempt 7 stopped early at an estimated 0.832 m when a camera-frame pause "
   "exceeded the 0.50 s tag-age limit; the user measured about 0.85 m. It is "
-  "retained as an aborted safety-stop attempt and excluded from the eight "
+  "retained as an aborted safety-stop attempt and excluded from the nine "
   "target-stop rows. An earlier Trial 2 connection attempt failed before "
   "motion when Windows switched away from RoboMaster Wi-Fi. No ToF "
   "measurement is claimed.")
 
-video = root / "results" / "trial_08_camera.mp4"
+video = root / "results" / "trial_10_camera.mp4"
 if video.exists():
     cap = cv2.VideoCapture(str(video))
     count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -146,13 +150,13 @@ if video.exists():
         cap.set(cv2.CAP_PROP_POS_FRAMES, index)
         ok, frame = cap.read()
         if ok:
-            path = tmp / f"trial08_{index}.jpg"
+            path = tmp / f"trial10_{index}.jpg"
             cv2.imwrite(str(path), frame)
             image_paths.append((label, path))
     cap.release()
     if len(image_paths) == 2:
         section("Robot-camera evidence")
-        p("Trial 8 camera frames show the identified tag at the start and near the "
+        p("Trial 10 camera frames show the identified tag at the start and near the "
           "stop. The MP4 contains the full approach with ID 3 and estimated "
           "distance overlays.")
         images = []
@@ -178,16 +182,16 @@ def report_figure(filename, caption):
 
 story.append(PageBreak())
 section("Motion and distance tracking")
-p("The following graphs use Trial 8 raw telemetry. This representative run stopped "
-  "at 0.628 m estimated versus 0.645 m measured. The target threshold is 0.63 m "
+p("The following graphs use Trial 10 raw telemetry. This run stopped "
+  "at 0.622 m estimated versus 0.650 m measured. The target threshold is 0.63 m "
   "because it includes the 0.08 m guard added to the 0.55 m nominal stop.")
 report_figure("01_distance_tracking.png",
   "Figure 1. Corrected range and camera-derived range versus elapsed time, with "
-  "the guarded stop threshold. Source: results/trial_08.csv.")
+  "the guarded stop threshold. Source: results/trial_10.csv.")
 report_figure("02_odometry_speed.png",
-  "Figure 2. Logged chassis x position and speed reference reconstructed from "
-  "the logged corrected range using the implemented control law. Individual "
-  "drive_speed commands and actual wheel speed were not logged.")
+  "Figure 2. Logged chassis x position and commanded forward speed during "
+  "Trial 10. The command values were recorded by the controller; actual wheel "
+  "speed was not measured.")
 
 story.append(PageBreak())
 section("Correction and calibration")
@@ -195,9 +199,9 @@ p("The camera measurement is used only when its innovation relative to the "
   "odometry prediction is within 0.15 m. The stationary calibration chart "
   "separates the two fit points from two independent tape checks.")
 report_figure("03_innovation.png",
-  "Figure 3. Camera minus predicted bumper range for accepted Trial 8 "
+  "Figure 3. Camera minus predicted bumper range for accepted Trial 10 "
   "corrections. Dashed lines show the +/-15 cm acceptance limit. "
-  "Source: results/trial_08.csv.")
+  "Source: results/trial_10.csv.")
 report_figure("04_calibration.png",
   "Figure 4. Camera-axis depth versus tape-measured bumper range. The 0.57 m "
   "and 1.50 m points define the line; 0.40 m and 1.45 m are held-out checks. "
@@ -205,7 +209,7 @@ report_figure("04_calibration.png",
 
 story.append(PageBreak())
 section("Across-trial comparison")
-p("Only eight target-stop runs are included. Trial 7 was an early safety stop "
+p("Only nine target-stop runs are included. Trial 7 was an early safety stop "
   "and is discussed on page 2. Trial 1's tape value was reported as almost "
   "61 cm, so its plotted measurement and error are approximate.")
 report_figure("05_final_distances.png",
@@ -213,7 +217,8 @@ report_figure("05_final_distances.png",
   "for every successful target-stop trial. Source: results/summary.csv.")
 report_figure("06_final_errors.png",
   "Figure 6. Signed error is estimate minus tape measurement. Mean absolute "
-  "error (MAE) is 2.0 cm; the signed range is -3.1 to +2.2 cm. "
+  f'error (MAE) is {summary["mean_absolute_error_m"]*100:.1f} cm; '
+  "the signed range is -3.1 to +2.2 cm. "
   "Source: results/summary.csv.")
 
 def footer(canvas, doc):
