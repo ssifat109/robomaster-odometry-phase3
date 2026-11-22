@@ -73,3 +73,7 @@ The PDF report, code, and trial results are published at
 https://github.com/ssifat109/robomaster-odometry-phase3. The student will send
 the demonstration videos directly to the TA. Do not describe the old
 simulations as Phase 3 data.
+
+## Phase 4 extension
+
+The Phase 4 bearing-aided EKF localization project, report, figures, source code, trial data, cover artwork, and robot-camera videos for analyzed trials 06–13 are available in [phase4/](phase4/). The Phase 4 analysis uses eight fixed-start trials and reports its calibration assumptions and limitations.

@@ -1,0 +1,7 @@
+{
+  "02": "No drive or tag capture; startup failed",
+  "05": "Endpoint measurement uncertain; user requested exclusion",
+  "01": "Earlier setup and no independent endpoint measurement",
+  "03": "Earlier start mark; not comparable with current fixed-start series",
+  "04": "Earlier setup and no independent endpoint measurement"
+}
