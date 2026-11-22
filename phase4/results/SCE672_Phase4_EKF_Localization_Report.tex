@@ -54,7 +54,7 @@ In this project, I evaluated whether camera-based bearing measurements to a fixe
 \section{Objective and Experimental Setup}
 I used the camera bearing to a stationary landmark as a measurement that could correct position and heading estimates propagated from the robot's odometry. I drove the robot forward along a straight floor path while keeping the AprilTag to the left of the path.
 
-I marked the origin at the chassis center and used +x for forward travel, +y for left, and an initial heading of zero along the path. I placed the tag approximately 1.20 m ahead and 0.40 m left of the robot camera. The camera was approximately 0.03 m ahead of the chassis-center origin, so I used a tag-center coordinate of (1.17 m, 0.40 m) in the chassis floor frame. I used a 142 mm black-square AprilTag 36h11, ID 3, and kept the camera/gimbal fixed.
+I marked the origin at the chassis center and used +x for forward travel, +y for left, and an initial heading of zero along the path. I placed the tag approximately 1.20 m ahead and 0.40 m left of the robot camera. The camera was approximately 0.03 m behind the chassis-center origin, so I used a tag-center coordinate of (1.17 m, 0.40 m) in the chassis floor frame. I used a 142 mm black-square AprilTag 36h11, ID 3, and kept the camera/gimbal fixed.
 
 \begin{table}[H]
 \centering
@@ -83,20 +83,40 @@ Before I ran the trials, I checked the camera while the robot was stationary. Th
 \caption{Tape-measured endpoints compared with the odometry and EKF estimates. The triangle marks the tag center.}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\linewidth]{trajectories.png}
+\caption{Odometry and EKF trajectories for the eight analyzed trials. The crosses show my independently measured endpoints.}
+\end{figure}
+
 \section{Localization Method}
-I represented the robot pose as $\mathbf{x}=[x,y,\theta]^T$. At each odometry step, I rotated the body-frame forward and lateral increments into the experiment frame:
+I represented the robot pose as $\mathbf{x}=[x,y,\theta]^T$. I subtracted the initial SDK odometry position, aligned its increments with the marked floor frame using the initial yaw, and converted each consecutive increment to robot-frame forward and lateral motion. At each step I used these odometry increments for prediction:
 \begin{align}
 x_{k+1} &= x_k + \cos\theta_k\,\Delta x_b - \sin\theta_k\,\Delta y_b,\\
 y_{k+1} &= y_k + \sin\theta_k\,\Delta x_b + \cos\theta_k\,\Delta y_b,\\
 \theta_{k+1} &= \operatorname{wrap}(\theta_k+\Delta\theta).
 \end{align}
+The motion Jacobian used in covariance propagation was
+\begin{equation}
+F_k=\begin{bmatrix}
+1&0&-\sin\theta_k\,\Delta x_b-\cos\theta_k\,\Delta y_b\\
+0&1& \cos\theta_k\,\Delta x_b-\sin\theta_k\,\Delta y_b\\
+0&0&1
+\end{bmatrix}.
+\end{equation}
 For the bearing update, I used the camera observation of the fixed tag. In simplified form, the predicted bearing is
 \begin{equation}
 h(\mathbf{x})=\operatorname{atan2}(y_t-y,\,x_t-x)-\theta-\psi_c,
 \end{equation}
 where $(x_t,y_t)$ is the tag center and $\psi_c$ is the configured camera yaw correction. I also included the configured camera translation in the bearing geometry.
 
-I propagated covariance with $P^- = FPF^T+Q$. For each bearing observation, I formed the innovation covariance $S=HP^-H^T+R$ and Kalman gain $K=P^-H^TS^{-1}$. I used the Joseph covariance update, $P=(I-KH)P^-(I-KH)^T+KRK^T$, and wrapped angular differences to $[-\pi,\pi)$. For the odometry-only comparison, I propagated the initial position with odometry and did not apply bearing updates.
+Specifically, with camera offset $(a_x,a_y)$, I used $c_x=x+\cos\theta\,a_x-\sin\theta\,a_y$ and $c_y=y+\sin\theta\,a_x+\cos\theta\,a_y$. Let $d_x=x_t-c_x$, $d_y=y_t-c_y$, $r^2=d_x^2+d_y^2$, $c'_x=-\sin\theta\,a_x-\cos\theta\,a_y$, and $c'_y=\cos\theta\,a_x-\sin\theta\,a_y$. The bearing Jacobian in my implementation is
+\begin{equation}
+H_k=\begin{bmatrix}d_y/r^2 & -d_x/r^2 & (d_yc'_x-d_xc'_y)/r^2-1\end{bmatrix}.
+\end{equation}
+I converted a detected tag's horizontal image coordinate $u$ to an observed bearing using $z=-\arctan((u-c_u)/f_x)$, with camera principal point $c_u$ and focal length $f_x$ scaled to the image width. I rejected detections near the image edge and wrapped the bearing innovation $\nu=\operatorname{wrap}(z-h(\mathbf{x}^-))$ to $[-\pi,\pi)$.
+
+I propagated covariance with $P^- = F_kPF_k^T+Q$. For each bearing observation, I formed $S=H_kP^-H_k^T+R$ and Kalman gain $K=P^-H_k^TS^{-1}$. I corrected the state with $\mathbf{x}^+=\mathbf{x}^-+K\nu$ and used the Joseph covariance update, $P^+=(I-KH_k)P^-(I-KH_k)^T+KRK^T$. For the odometry-only comparison, I propagated the initial position with odometry and did not apply bearing updates.
 
 \section{Noise Assumptions}
 I used the values in Table~\ref{tab:noise} as provisional starting assumptions. I did not estimate them from dedicated repeated-motion and independent bearing-calibration datasets, so I do not interpret them as measured sensor specifications.
@@ -119,8 +139,11 @@ Camera bearing & 3 degrees & $2.74\times10^{-3}$ rad$^2$ & Conservative provisio
 
 I calculated the reported one-sigma position values as the square roots of the final covariance diagonal entries. They describe uncertainty under my configured model. Since the residuals show a directional bias, I do not treat these values as capturing every source of observed error.
 
+In matrix form, my per-step settings were $Q=\operatorname{diag}(4.9\!\times\!10^{-5},4.9\!\times\!10^{-5},7.62\!\times\!10^{-5})$, with position entries in $\mathrm{m}^2$ and the heading entry in $\mathrm{rad}^2$, and $R=2.74\!\times\!10^{-3}\ \mathrm{rad}^2$. I initialized position standard deviations at 0.02 m in x and y and heading standard deviation at 2 degrees.
+
 \section{Results}
 I analyzed trials 06 through 13. Table~\ref{tab:trials} lists each measured endpoint, each estimated endpoint, the Euclidean errors, and the final EKF standard deviations. Positions and errors are in metres; $y$ is positive to the left.
+For each method I calculated endpoint position error as $e_i=\sqrt{(\hat{x}_i-x_{i,\mathrm{meas}})^2+(\hat{y}_i-y_{i,\mathrm{meas}})^2}$ and mean error as $\bar e=(1/8)\sum_{i=1}^{8}e_i$. I reported EKF one-sigma values as $\sigma_x=\sqrt{P_{xx}}$ and $\sigma_y=\sqrt{P_{yy}}$ at the final update.
 
 \begin{table}[H]
 \centering
