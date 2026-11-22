@@ -77,3 +77,5 @@ simulations as Phase 3 data.
 ## Phase 4 extension
 
 The Phase 4 bearing-aided EKF localization project, report, figures, source code, trial data, cover artwork, and robot-camera videos for analyzed trials 06–13 are available in [phase4/](phase4/). The Phase 4 analysis uses eight fixed-start trials and reports its calibration assumptions and limitations.
+
+The Phase 4 demonstration combines all trial attempts in one side-by-side phone and robot-camera video: https://youtube.com/shorts/OIwx5EAHnV4
